@@ -23,6 +23,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->loadMigationsFromSubfolders();
+    }
+
+    protected function loadMigationsFromSubfolders()
+    {
+        $mainPath = database_path('migrations');
+        $directories = glob($mainPath . '/*' , GLOB_ONLYDIR);
+        $paths = array_merge([$mainPath], $directories);
+
+        $this->loadMigrationsFrom($paths);
     }
 }

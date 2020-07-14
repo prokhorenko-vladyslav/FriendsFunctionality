@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\CRM;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -41,6 +41,6 @@ class User extends Authenticatable
 
     public function friends() : BelongsToMany
     {
-        return $this->belongsToMany(self::class, 'friends', 'user_id', 'friend_id');
+        return $this->belongsToMany(self::class, 'friends', 'user_id', 'friend_id')->withTimestamps();
     }
 }

@@ -3,48 +3,66 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Friend\Destroy;
-use App\Http\Requests\Friend\Index;
-use App\Http\Requests\Friend\Store;
+use App\Http\Resources\CRM\FriendCollection;
 use App\Models\CRM\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class FriendController extends Controller
 {
-    public function index(Index $request)
+    public function index(Request $request)
     {
-        return responder()->success([
-            'friends' => Auth::user()->friends()->get()
-        ]);
+        return responder()->success(
+            (new FriendCollection(Auth::user()->acceptedFriends()->paginate(config('app.page_size'))))->response()->getData(true)
+        )->respond();
     }
 
-    public function store(Store $request)
+    public function add(Request $request, int $friendId)
     {
-        $friendId = (int)$request->validated()['friend_id'];
         if ($friendId === Auth::id()) {
             return responder()->error(500)->respond(500);
         }
 
-        if (!Auth::user()->friends()->find($friendId)) {
-            try {
-                $friend = User::find($request->validated()['friend_id']);
-                Auth::user()->friends()->save($friend);
-            } catch (\Exception $e) {
-                return responder()->error(500)->respond(500);
-            }
+        if (!User::find($friendId)) {
+            return responder()->error(404)->respond(404);
         }
 
-        return responder()->success()->respond(200);
+        try {
+            Auth::user()->friends()->syncWithoutDetaching([$friendId]);
+            return responder()->success()->respond(200);
+        } catch (\Exception $e) {
+            return responder()->error(500)->respond(500);
+        }
     }
 
-    public function destroy(Destroy $request, int $friendId)
+    public function remove(Request $request, int $friendId)
     {
         try {
+            if (!Auth::user()->acceptedFriends()->find($friendId)) {
+                return responder()->error(404)->respond(404);
+            }
+
             Auth::user()->friends()->detach($friendId);
         } catch (\Exception $e) {
             return responder()->error(500)->respond(500);
         }
 
         return responder()->success()->respond(200);
+    }
+
+    public function accept(Request $request, int $friendId)
+    {
+        try {
+            if (!Auth::user()->notAcceptedFriends()->find($friendId)) {
+                return responder()->error(404)->respond(404);
+            }
+
+            Auth::user()->friends()->updateExistingPivot($friendId, [
+                'accepted' => 1
+            ]);
+            return responder()->success()->respond(200);
+        } catch (\Exception $e) {
+            return responder()->error(500)->respond(500);
+        }
     }
 }

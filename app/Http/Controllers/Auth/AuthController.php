@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CRM\UserResource;
 use App\Models\CRM\User;
 use App\Http\Requests\Auth\{ChangePassword, ForgotPassword, Login, Register};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,13 +38,10 @@ class AuthController extends Controller
         }
     }
 
-    public function forgotPassword(ForgotPassword $request)
+    public function current(Request $request)
     {
-
-    }
-
-    public function changePassword(ChangePassword $request)
-    {
-
+        return responder()->success(
+            (new UserResource(Auth::user()))->response()->getData(true)
+        )->respond();
     }
 }

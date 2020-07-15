@@ -56,6 +56,8 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'page_size' => env('PAGE_SIZE', 10),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

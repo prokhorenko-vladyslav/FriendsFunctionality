@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CRM\UserResource;
 use App\Models\CRM\User;
 use App\Http\Requests\Auth\{ChangePassword, ForgotPassword, Login, Register};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,5 +36,12 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return responder()->error(500)->respond(500);
         }
+    }
+
+    public function current(Request $request)
+    {
+        return responder()->success(
+            (new UserResource(Auth::user()))->response()->getData(true)
+        )->respond();
     }
 }

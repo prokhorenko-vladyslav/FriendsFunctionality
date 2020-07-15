@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CRM\FriendCollection;
 use App\Models\CRM\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,9 +12,9 @@ class FriendController extends Controller
 {
     public function index(Request $request)
     {
-        return responder()->success([
-            'friends' => Auth::user()->acceptedFriends()->get()
-        ]);
+        return responder()->success(
+            (new FriendCollection(Auth::user()->acceptedFriends()->paginate(config('app.page_size'))))->response()->getData(true)
+        )->respond();
     }
 
     public function add(Request $request, int $friendId)

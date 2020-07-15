@@ -21,6 +21,12 @@ Route::prefix('v1')->middleware('force_json')->group(function() {
     });
 
     Route::middleware('auth:api')->group(function() {
+        Route::prefix('auth')->namespace('Auth')->group(function () {
+            Route::get('current', 'AuthController@current')->name('auth.current');
+        });
+    });
+
+    Route::middleware('auth:api')->group(function() {
         Route::prefix('crm')->namespace('CRM')->group(function() {
             Route::get('friend', 'FriendController@index')->name('friend.index');;
             Route::post('friend/{friend}', 'FriendController@add')->name('friend.add');

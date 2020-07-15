@@ -35,14 +35,4 @@ class AuthController extends Controller
             return responder()->error(500)->respond(500);
         }
     }
-
-    public function forgotPassword(ForgotPassword $request)
-    {
-
-    }
-
-    public function changePassword(ChangePassword $request)
-    {
-
-    }
 }

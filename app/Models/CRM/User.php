@@ -3,6 +3,7 @@
 namespace App\Models\CRM;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -42,5 +43,15 @@ class User extends Authenticatable
     public function friends() : BelongsToMany
     {
         return $this->belongsToMany(self::class, 'friends', 'user_id', 'friend_id')->withTimestamps();
+    }
+
+    public function acceptedFriends()
+    {
+        return $this->friends()->where('accepted', 1);
+    }
+
+    public function notAcceptedFriends()
+    {
+        return $this->friends()->where('accepted', 0);
     }
 }

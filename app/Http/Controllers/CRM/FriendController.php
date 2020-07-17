@@ -8,8 +8,18 @@ use App\Models\CRM\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Class FriendController
+ * @package App\Http\Controllers\CRM
+ */
 class FriendController extends Controller
 {
+    /**
+     * Method, which returns list of friends
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         return responder()->success(
@@ -17,6 +27,13 @@ class FriendController extends Controller
         )->respond();
     }
 
+    /**
+     * Method, which adds new friend for current user
+     *
+     * @param Request $request
+     * @param int $friendId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function add(Request $request, int $friendId)
     {
         if ($friendId === Auth::id()) {
@@ -35,6 +52,13 @@ class FriendController extends Controller
         }
     }
 
+    /**
+     * Method, which removes friend of current user
+     *
+     * @param Request $request
+     * @param int $friendId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function remove(Request $request, int $friendId)
     {
         try {
@@ -50,6 +74,13 @@ class FriendController extends Controller
         return responder()->success()->respond(200);
     }
 
+    /**
+     * Method, which accept friend offer
+     *
+     * @param Request $request
+     * @param int $friendId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function accept(Request $request, int $friendId)
     {
         try {
